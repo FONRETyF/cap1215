@@ -5,7 +5,7 @@
         public function conexfonretyf(){
             try {
                 //$conectar = $this->dbh= new PDO("pgsql:host=localhost; port=5432; dbname=fonretyf; user=postgres; password='admin*&'");
-                $PDO = new PDO("pgsql:host=localhost; port=5432; dbname=acup; user=postgres; password='Fonre.21-24'");
+                $conectar = $this->dbh= new PDO("pgsql:host=localhost; port=5432; dbname=fonretyf; user=postgres; password='Fonre.21-24'");
                 return $conectar;  
 
             } catch (PDOException $error) {

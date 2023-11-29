@@ -51,6 +51,13 @@ use function PHPSTORM_META\type;
             
             return $retiroJub;
         }  
+        
+        public function get_Tram_Id($identret){
+            $statement = $this->db->prepare("SELECT * FROM public.tramites_fonretyf_hist WHERE identret='". $identret."'");
+            $statement->execute();
+            $results = $statement->fetchAll(PDO::FETCH_ASSOC);
+            return $results;
+        }
 
         public function get_retiro_Id($cvemae){
             $statement = $this->db->prepare("SELECT * FROM public.tramites_fonretyf_hist WHERE cvemae='". $cvemae."'");
@@ -154,12 +161,12 @@ use function PHPSTORM_META\type;
                 $a_resultAddTram["insertCheque"] = $insertaCheque;
     
                 if ($a_resultAddTram["insertTramite"] == "Agregado" && $a_resultAddTram["updateMaestro"] == "Actualizado" && $a_resultAddTram["insertCheque"] == "Agregado" ) {
-                    if ($motvret=="I") {
+                    if ($motvret=="FRI") {
                         $statementActEntr = "UPDATE public.entregas_fonretyf SET numtramites=". $get_entrega[0][12] + 1 .", numtraminha=". $get_entrega[0][13] + 1 .", monttotentr=". str_replace(",","",str_replace("$","",$get_entrega[0][29])) + $montrettot ."  WHERE identrega='".$identr."'";
                         $statementActEntr = $this->db->prepare($statementActEntr);
                         $statementActEntr->execute();
                         $resultsActEntr = $statementActEntr->fetchAll(PDO::FETCH_ASSOC);     
-                    } elseif ($motvret=="J") {
+                    } elseif ($motvret=="FRJ") {
                         $statementActEntr = "UPDATE public.entregas_fonretyf SET numtramites=". ($get_entrega[0][12] + 1) .", numtramjub=". ($get_entrega[0][14] + 1) .", monttotentr=". str_replace(",","",str_replace("$","",$get_entrega[0][29])) + $montrettot ."  WHERE identrega='".$identr ."'";
                         $statementActEntr = $this->db->prepare($statementActEntr);
                         $statementActEntr->execute();
@@ -372,7 +379,7 @@ use function PHPSTORM_META\type;
             $fechaini=str_replace('"','',$fechinipsgs);
             $fechafin=str_replace('"','',$fechfinpsgs);
     
-            if ($motivret == "J" || $motivret == "I") {
+            if ($motivret == "FRJ" || $motivret == "FRI") {
                 try {
                     $statementUpdate = "UPDATE public.maestros_smsem";
                     $statementUpdate = $statementUpdate . " SET cveissemym='".$cveissemym."', curpmae='".$curpmae."', rfcmae='".$rfcmae."', regescmae= ".$region ." , fcbasemae='".$fechbase."', aservactmae=".$aniosserv.", fbajamae='".$fechbaja."', estatlabmae='". $motivret ."', cveusu='".$usuario."', fechmodif='".$fecha."'";

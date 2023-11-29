@@ -5,14 +5,6 @@
         header("Location:login.php");
     }
 
-    if (isset($_POST['uploadImage'])) {
-        //echo("va subir imahebnjhh");
-    } else {
-       // echo("no va subir nada");
-    }
-    
-    
-
 ?>
 
 <section class="contenidoGral">        
@@ -35,7 +27,6 @@
                 <div id="DvNumEntrNuev">Num. Entrega:
                     <input type="text" class="InptsEntrDetalle" id="InputNumEntr" name="InputNumEntr" value="<?php echo substr($_GET["identrega"],4,2);?>" disabled>
                     <input type="hidden" id="numentr" name="numentr">
-                    
                 </div> 
                 <div id="DvAnioEntrNuev">Año:
                     <input type="text" class="InptsEntrDetalle" id="InputAnioEntr" name="InputAnioEntr" value="<?php echo substr($_GET["identrega"],0,4);?>" disabled>
@@ -50,10 +41,10 @@
             <div id="causaRetiro">Causa Retiro: &nbsp
                 <select name="OpcCauRetiro" id="OpcCauRetiro" placeholder="MOTIVO RET" onchange="">
                     <option selected="true" disabled="disabled">Seleccione Motivo</option>
-                    <option value="I">INHABILITACION</option>
-                    <option value="J">JUBILACION</option>
-                    <option value="FA">FALLECIMIENTO ACT</option>
-                    <option value="FJ">FALLECIMIENTO JUB</option>
+                    <option value="FRI">INHABILITACION</option>
+                    <option value="FRJ">JUBILACION</option>
+                    <option value="FRF">FALLECIMIENTO ACT</option>
+                    <option value="FMJ">FALLECIMIENTO JUB</option>
                 </select>
             </div>
             
@@ -76,9 +67,9 @@
                             <input type="text" class="DatsNomMae" id="nombreMae" name="nombreMae" >
                         </div>    
                         <div id="textnommae">
-                            <div class="nomMaestro" id="TextApePat" diabled>Apellido Paterno</div>
-                            <div class="nomMaestro" id="TextApeMat" >Apellido Materno</div>
-                            <div class="nomMaestro" id="TextNom" >Nombre (s)</div>
+                            <div class="nomMaestro" id="TextApePat">Apellido Paterno</div>
+                            <div class="nomMaestro" id="TextApeMat">Apellido Materno</div>
+                            <div class="nomMaestro" id="TextNom">Nombre (s)</div>
                         </div>
                         <div>
                             <input type="text" class="nomComplMae" id="nomComplMae" name="nomComplMae" >
@@ -141,12 +132,12 @@
                                     <option value="CT">Carta Testamentaria</option>
                                     <option value="J">Juicio</option>
                                 </select>
-                                <div><input type="date" id="fechCTJuicio" name="fechCTJuicio" min="2022-01-01" max="2050-12-31" pattern="\d{4}-\d{2}-\d{2}" required ></div>
+                                <div><input type="date" id="fechCTJuicio" name="fechCTJuicio" max="2050-12-31" pattern="\d{4}-\d{2}-\d{2}" required ></div>
                             </div>
                             <div id="DivBenefs">
                                 <input type="hidden" id="numbenef" name="numbenef" value="1">
-                                <div><button id="editaBefens" ><img src="../../img/agrega_benef.png" alt="Edita beneficiarios" title="Editar beneficiarios" height="28" width="28" ></button></div>
-                                <div># de Benefs: <input type="text" id="numBenefs" name="numBenefs" ></div>
+                                <div><button id="editaBefens"><img src="../../img/agrega_benef.png" alt="Edita beneficiarios" title="Editar beneficiarios" height="28" width="28" ></button></div>
+                                <div># de Benefs: <input type="text" id="numBenefs" name="numBenefs"></div>
                             </div>
                         </div>
                         
@@ -171,7 +162,6 @@
                 <div id="divObservacionesTram">
                     <div>Observaciones</div><div><input type="text" id="observTramite" name="observTramite" maxlength="500"></div>                   
                 </div>
-                
                 <div id="divAgregaTram">
                     <button type="submit" id="agregaTramite" name="agregaTramite" >AGREGAR</button>
                 </div>

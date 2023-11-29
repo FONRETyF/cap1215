@@ -10,8 +10,6 @@
                     <div class="modal-header" id="modalHeader">
                         <h4 id="modal-title"></h4>
                     </div>
-                    
-                    
                     <section id="ContenNomMae">
                         <section id="DatsNomMae">
                             <div id="DatNomMaeModif">

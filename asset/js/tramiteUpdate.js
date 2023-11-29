@@ -8,10 +8,6 @@ var numadedsM = 0;
 var tipTramit = '';
 
 function init(){
-    /*$("#edita_NomMae").on("submit",function(e){
-        alert("kdfjlkdsjfldjs");
-        actNomMae(e);
-    });*/
 }
 
 $(document).ready(function () {
@@ -19,18 +15,11 @@ $(document).ready(function () {
     document.getElementById('AnioEntr').value = document.getElementById('InputAnioEntr').value;
     document.getElementById('IdEntrega').value = document.getElementById('AnioEntr').value + document.getElementById('numentr').value;
     document.getElementById("DivTestBenefsMae").style.display = "none";
-    document.getElementById("DivExcepciones").style.display = "none";
-    document.getElementById("DivFechInicioJuicio").style.display = "none";
-    document.getElementById("DivDatsAdeudos").style.display = "none";
 
     $('#tituto_BasJubBajFall').html('BASE Y BAJA');
     $('#tituto_InptBasJub').html('Base: &nbsp');
     $('#tituto_InptBajFall').html('Baja: &nbsp');   
     
-    $("#cerrarEditPSGS").click(function () {
-        $("#editarPSGS").modal('hide');
-    });
-
     $("#cerrarEditBenefs").click(function () {
         $("#editarBenefs").modal('hide');
     });
@@ -47,7 +36,7 @@ $(document).ready(function () {
 
         motivo = motivoRet;
 
-        if(motivoRet == "J" || motivoRet == "I") {
+        if(motivoRet == "FRJ" || motivoRet == "FRI") {
             $.post("../../controller/retiros.php?op=updateTram",{identret:paramidret,modretiro:modretiro,cvemae:cvemae,motivoRet:motivoRet},function(data){
                 datUpdateTram = Object.values(JSON.parse(data));
                 var infoTramite = Object.values(datUpdateTram[0]);
@@ -55,10 +44,10 @@ $(document).ready(function () {
                 idretiro = infoTramite[4];
                 
                 switch (infoTramite[7]) {
-                    case 'I':
+                    case 'FRI':
                         var estatLabMae = "INHABILITADO";
                         break;
-                    case 'J':
+                    case 'FRJ':
                         var estatLabMae = "JUBILADO";
                         break;
                     default:
@@ -266,7 +255,7 @@ $(document).ready(function () {
                 
                 
             });
-        }else if (motivoRet == "FA") {
+        }else if (motivoRet == "FRF") {
             document.getElementById("DivDictamen").style.display = "none";
             document.getElementById("DivTestBenefsMae").style.display = "block";
             document.getElementById("OpcTestamento").disabled = true;
@@ -429,7 +418,7 @@ $(document).ready(function () {
                 }
             });
 
-        }else if (motivoRet == "FJ") {
+        }else if (motivoRet == "FMJ") {
             document.getElementById("DivDictamen").style.display = "none";
             document.getElementById("DivTestBenefsMae").style.display = "block";
             document.getElementById("DivPsgs").style.display =  "none";
@@ -625,36 +614,6 @@ $(".TelsMae").keydown(function (event){
     }
 });
 
-$("#TelPartiMae").change(function () {
-    teleParticular = $("#TelPartiMae").val();
-
-    if (teleParticular.length > 10 || teleParticular.length < 10) {
-        Swal.fire(
-            'EL NUMERO DE TELEFONO PARTICULAR ES INCORRECTO',
-            'deben ser 10 digitos'
-        )
-        $("#TelPartiMae").focus();
-        document.getElementById('TelPartiMae').style.border =  ".1em red solid";
-    }else{
-        document.getElementById('TelPartiMae').style.border =  ".1em black solid";
-    }
-});
-
-$("#TelCelMae").change(function () {
-    teleCelular = $("#TelCelMae").val();
-
-    if (teleCelular.length > 10 || teleCelular.length < 10) {
-        Swal.fire(
-            'EL NUMERO DE TELEFONO CELULAR ES INCORRECTO',
-            'deben ser 10 digitos'
-        )
-        $("#TelCelMae").focus();
-        document.getElementById('TelCelMae').style.border =  ".1em red solid";
-    } else {
-        document.getElementById('TelCelMae').style.border =  ".1em black solid";
-    }
-});
-
 function validacurpBenef(inputCurpBenef){
     if (inputCurpBenef.value.length != 18 ) {
         Swal.fire(
@@ -671,97 +630,6 @@ function validaNomBenef(inputNomBenef) {
             'Proporcione un NOMBRE correcto'
         );
     }
-}
-
-$("#EditaNombre").on("click", function (e) {
-    e.preventDefault();
-
-    $('#modal-title').html('Modificando nombre');
-    $.post("../../controller/maestro.php?op=mostrarNom",{clavemae:clavemae},function(data){       
-        data = JSON.parse(data);
-        $('#cvemae').val(data.csp);
-        $('#apepatModif').val(data.apepatmae);
-        $('#apematModif').val(data.apematmae);
-        $('#nommaeModif').val(data.nommae);
-        $('#nomcomModif').val(data.nomcommae);
-    });
-    $('#editarNomMae').modal('show');
-});
-
-$("#updNomMae").on("click", function (event) {
-    event.preventDefault();
-    actNomMae(event);
-});
-
-function actNomMae(e){
-    e.preventDefault();
-    nomComMae = $('#apepatModif').val() + " " + $('#apematModif').val() + " " + $('#nommaeModif').val();
-    $('#nomcomModif').val(nomComMae);
-	
-	if($('#OpcCauRetiro').val() == "FJ"){
-		$.post("../../controller/maestro.php?op=actNomMae",{apepatModif:$('#apepatModif').val(),apematModif:$('#apematModif').val(),nommaeModif:$('#nommaeModif').val(),nomcomModif:$('#nomcomModif').val(),cvemae:$('#cvemae').val()},function(data){ 
-			resultadoUpd = Object.values( JSON.parse(data));
-			if(resultadoUpd[0] == "actualizado"){
-				
-				swal.fire(
-					'Modificacion!',
-					'Los Datos se actualizaron correctamente!!!',
-					'success'
-				);
-				$('#edita_NomMae')[0].reset();
-				$("#editarNomMae").modal('hide');
-			}else{
-				swal.fire(
-					'ERROR!!!',
-					'Surgio un error consultelo con el administrador dle sistema!!!',
-					'success'
-				);
-			}
-		});
-		
-		clavemae = $("#cveIMaeBusq").val();
-	
-		$.post("../../controller/maestro.php?op=buscarJub",{claveisemym:clavemae},function(data){ 
-			data = JSON.parse(data);
-			$('#apePatMae').val(data.apepatmae);
-			$('#apeMatMae').val(data.apematmae);
-			$('#nombreMae').val(data.nommae);
-			//$('#estLaboral').val(estatusMae);
-			$('#nomComplMae').val(data.nomcommae);
-			$('#nomSolic').val(data.nomcommae); 
-		});
-	}else{
-		var formData = new FormData($("#edita_NomMae")[0]);
-		$.ajax({
-			url: '../../controller/maestro.php?op=actNomMae',
-			type: "POST",
-			data: formData,
-			contentType: false,
-			processData: false,
-			success: function(datos){
-				$('#edita_NomMae')[0].reset();
-				$("#editarNomMae").modal('hide');
-				swal.fire(
-					'Modificacion!',
-					'Los Datos se actualizaron correctamente!!!',
-					'success'
-				);
-			}
-		});
-		
-		//clavemae = $("#cspMaeBusq").val();
-
-		$.post("../../controller/maestro.php?op=buscar",{clavemae:clavemae},function(data){ 
-			data = JSON.parse(data);
-			$('#apePatMae').val(data.apepatmae);
-			$('#apeMatMae').val(data.apematmae);
-			$('#nombreMae').val(data.nommae);
-			$('#estLaboral').val($("#estLaboral").val());
-			$('#nomComplMae').val(data.nomcommae);
-			$('#nomSolic').val(data.nomcommae); 
-		});
-		
-	}
 }
 
 const accionFechBaja = document.querySelector("#fechBajaMae");
@@ -797,593 +665,15 @@ accionFechBase.addEventListener("blur", function (evento) {
     }
 });
 
-var checkBoxTipTram = document.getElementById('tipTramNE');
-checkBoxTipTram.addEventListener("change", tramExtra, false);
-function tramExtra() {
-    var checkedTE = checkBoxTipTram.checked;
-
-	var folsbenefs = document.getElementsByClassName('divfoliosbenef');
-
-    if (checkedTE) {
-        if (motivo == 'J' || motivo == 'I') {
-            document.getElementById("numfolioTEJI").style.display = "block";
-        } else {
-            document.getElementById("numfolioTEJI").style.display = "none";
-			for(var i=0; i < folsbenefs.length; i++){
-				folsbenefs[i].style.display = 'block';
-			}
-        }
-        tipTramit = '1';
-    } else {
-        document.getElementById("numfolioTEJI").style.display = "none";
-
-		for(var i=0; i < folsbenefs.length; i++){
-			folsbenefs[i].style.display = 'none';
-		}
-	
-        tipTramit = '0';
-    }
-}
-
-
-var checkboxPSGS = document.getElementById('sinPSGS');
-checkboxPSGS.addEventListener("change", validaCheckPSGS, false);
-function validaCheckPSGS(){
-    var checked = checkboxPSGS.checked;
-    if(checked){
-        document.getElementById("editaPSGS").disabled =  true;
-        document.getElementById('numPsgs').value = 0;
-        document.getElementById('diasPsgs').value = 0;
-        document.getElementById('fechsIniPSGS').value = "{}";
-        document.getElementById('fechsFinPSGS').value = "{}";
-        document.getElementById("calcDiasAnios").disabled = false;
-    }else{
-        document.getElementById("editaPSGS").disabled =  false;
-        document.getElementById("calcDiasAnios").disabled = true;
-    }
-}
-
-var numAgrPSGS=0;
-const psgs_max = 30;
-const accionPSGS = document.querySelector("#editaPSGS");
-accionPSGS.addEventListener("click", function (evento){
-    evento.preventDefault();
-    if (contPSGS == 0) {
-        $('#tituto_mod_psgs').html('Agregar P.S.G.S');
-        $('#edita_PSGS')[0].reset();
-        document.getElementById('numsPSGS').value = contPSGS;
-        $('#editarPSGS').modal('show');
-        document.getElementById("calcDiasAnios").disabled = false;
-    } else {
-        $('#tituto_mod_psgs').html('Agregar P.S.G.S');
-        $('#edita_PSGS')[0].reset();
-        $("#numsPSGS").val(contPSGS);
-        document.getElementById("calcDiasAnios").disabled = false;
-        var fechaIn = document.getElementById('fechsIniPSGS').value.replace("{","").replace("}","");
-        var fechaFn = document.getElementById('fechsFinPSGS').value.replace("{","").replace("}","");
-        var fechasInicio = fechaIn.split(",");
-        var fechasFinal = fechaFn.split(",");
-        var numerofechas = Object.keys(fechasInicio).length;
-        for (i = 0; i < numerofechas; i++) {
-            var fechaI = fechasInicio[i].split(":");
-            var fechaF = fechasFinal[i].split(":");
-            document.getElementById('fechaIni[' + i + ']').value = fechaI[1];
-            document.getElementById('fechaFin[' + i + ']').value = fechaF[1];
-        }
-        $('#editarPSGS').modal('show');
-    }
-});
-
-$("#edita_PSGS").on("submit",function(evento){
-    evento.preventDefault();
-    var diasActivo=0;
-    var formDataPSGS = new FormData($("#edita_PSGS")[0]);
-    $.ajax({
-        url: '../../controller/tramites.php?op=diasPSGS',
-        type: "POST",
-        data: formDataPSGS,
-        contentType: false,
-        processData: false,
-        success: function(datos){
-            numAgrPSGS++;
-            $('#edita_PSGS')[0].reset();
-            $("#editarPSGS").modal('hide');
-            if (datos == 0 && document.getElementById('DiasServOriginal').value > 0) {
-                diasActivo = parseInt(document.getElementById('diasServMae').value) + parseInt(document.getElementById('diasPsgs').value);
-                document.getElementById('numPsgs').value = 0;
-                document.getElementById('diasPsgs').value = 0;
-                document.getElementById('diasServMae').value = diasActivo;
-                document.getElementById('aniosServMae').value = Math.trunc(diasActivo/365);  
-                document.getElementById('fechsIniPSGS').value = "{}";
-                document.getElementById('fechsFinPSGS').value = "{}";
-            } else {
-                data = JSON.parse(datos);
-                $('#numPsgs').val(data.numPSGS);
-                if (document.getElementById('diasServMae').value > 0) {
-                    if (document.getElementById('diasServMae').value > 0) {
-                        diasActivo = document.getElementById('DiasServOriginal').value - data.diasPSGS;
-                    } else {
-                        diasActivo = document.getElementById('diasServMae').value - data.diasPSGS;
-                    }
-                }
-                document.getElementById('diasServMae').value = diasActivo;
-                document.getElementById('diasPsgs').value = data.diasPSGS;
-                document.getElementById('aniosServMae').value = Math.trunc(diasActivo/365);  
-                document.getElementById('fechsIniPSGS').value = JSON.stringify(data.fechIni).replaceAll('"','');
-                document.getElementById('fechsFinPSGS').value = JSON.stringify(data.fechFin).replaceAll('"','');                
-            }
-        }
-    });   
-});
-
-$("#addPSGS").click(function (e) {
-    e.preventDefault();
-    if (contPSGS < psgs_max) {
-        $('#DivFechsPSGSIni').append(
-            '<div><input type="date" name="fechaIni['+ contPSGS +']" id="fechaIni['+ contPSGS +']"><a href="#" class="delete_fechaI"><img src="../../img/delete.png" alt="Eliminar" title="Eliminar fecha" height="15" width="20"></a></input></div>'
-        );
-        $('#DivFechsPSGSFin').append(
-            '<div><input type="date" name="fechaFin['+ contPSGS +']"  id="fechaFin['+ contPSGS +']"><a href="#" class="delete_fechaF"><img src="../../img/delete.png" alt="Eliminar" title="Eliminar fecha" height="15" width="20"></a></input></div>'
-        );
-        contPSGS++
-    }
-    document.getElementById('numsPSGS').value = contPSGS;
-});
-
-$('#DivFechsPSGS').on("click",".delete_fechaI",function(e){
-    e.preventDefault();
-    $(this).parent('div').remove();
-    contPSGS = contPSGS - 0.5;
-    document.getElementById('numsPSGS').value = contPSGS;
-});
-
-$('#DivFechsPSGS').on("click",".delete_fechaF",function(e){
-    e.preventDefault();
-    $(this).parent('div').remove();
-    contPSGS = contPSGS - 0.5;
-    document.getElementById('numsPSGS').value = contPSGS;
-});
-
-var programafallec = "";
-clavemae = document.getElementById('cspMaeBusq').value;
-const accionCalculadora = document.querySelector('#calcDiasAnios');
-accionCalculadora.addEventListener("click", function (evento) {
-    evento.preventDefault();
-    var valorValid = 0;
-    var motivo = document.getElementById('OpcCauRetiro').value;
-
-    if (motivo == "I" || motivo == "J" || motivo == "FA") {
-        if (motivo == "I" || motivo == "J") {
-            var a_fechs = [
-                {fecha:"Recibido", nomvar:"fechRecibido", valorF:document.getElementById('fechRecibido').value},
-                {fecha:"Dictamen", nomvar:"fechDictamen", valorF:document.getElementById('fechDictamen').value},
-                {fecha:"Base", nomvar:"fechBaseMae", valorF:document.getElementById('fechBaseMae').value},
-                {fecha:"Baja", nomvar:"fechBajaMae", valorF:document.getElementById('fechBajaMae').value}
-            ]
-        } else {
-            var a_fechs = [
-                {fecha:"Recibido", nomvar:"fechRecibido", valorF:document.getElementById('fechRecibido').value},
-                {fecha:"Base", nomvar:"fechBaseMae", valorF:document.getElementById('fechBaseMae').value},
-                {fecha:"Baja", nomvar:"fechBajaMae", valorF:document.getElementById('fechBajaMae').value}
-            ]
-        }
-    } else {
-        var a_fechs = [
-            {fecha:"Recibido", nomvar:"fechRecibido", valorF:document.getElementById('fechRecibido').value},
-            {fecha:"Base", nomvar:"fechBaseMae", valorF:document.getElementById('fechBaseMae').value},
-            {fecha:"Baja", nomvar:"fechBajaMae", valorF:document.getElementById('fechBajaMae').value}
-        ]
-    } 
-    
-    a_fechs.forEach(element => {
-        if (isNaN(Date.parse(element["valorF"])) || element["valorF"] == "") {
-            a_fechs.push({validF:true,descerror:"La fecha de " + element["fecha"] + " no es valida"});
-            document.getElementById(element["nomvar"]).style.border =  ".1em red solid";
-            valorValid = 0;
-            Swal.fire(
-                "La fecha de " + element["fecha"] + " no es valida",
-                'por favor verifiquela'
-            );
-        } else {
-            a_fechs.push({validF:true,descerror:""});
-            //parseInt(element["valorF"].slice(0,4)) > 1930 && parseInt(element["valorF"].slice(0,4)) < 2024
-            if (parseInt(element["valorF"].split("-")[0]) > 1930 && parseInt(element["valorF"].split("-")[0]) < 2024) {
-                a_fechs.push({validA:true});
-                document.getElementById(element["nomvar"]).style.border =  ".1em black solid";
-                valorValid = valorValid + 1;
-            }else{
-                a_fechs.push({validA:false});
-                document.getElementById(element["nomvar"]).style.border =  ".1em red solid";
-                valorValid = 0;
-                Swal.fire(
-                    "El año de la fecha " + element["fecha"] + " no es valido",
-                    'por favor verifiquela'
-                );
-            }
-        }
-    });
-
-    validaFechas(valorValid, a_fechs);
-});
-
-function validaFechas(valorValid, a_fechs) {
-    if (valorValid == 4) {
-        motret = $("#OpcCauRetiro").val();
-        NumPersgs = $("#numPsgs").val();
-        diasInacPsgs = $("#diasPsgs").val();
-        $.post("../../controller/tramites.php?op=validaFechs",{clavemae:clavemae,motret:motret,diasInacPsgs:diasInacPsgs,NumPersgs:NumPersgs,fechRecibido:a_fechs[0]["valorF"],fechDictamen:a_fechs[1]["valorF"],fechBaseMae:a_fechs[2]["valorF"],fechBajaMae:a_fechs[3]["valorF"]},function(data){
-            data = JSON.parse(data);
-            resultValid = data.descResult;
-            switch (resultValid) {
-                case 'vigenciaVal':
-                    diasServicio = data.diasServ;
-                    aniosServicio = Math.trunc(diasServicio/365);
-                    if (document.getElementById('numPsgs').value > 0 && document.getElementById('diasPsgs').value !== 0){
-                        document.getElementById('DiasServOriginal').value = diasServicio;
-                        document.getElementById('diasServMae').value = diasServicio;
-                        document.getElementById('aniosServMae').value = aniosServicio;
-                        document.getElementById("ModoRetiro").disabled =  false;
-                    }else{
-                        document.getElementById('numPsgs').value = 0;
-                        document.getElementById('diasPsgs').value = 0;
-                        document.getElementById('DiasServOriginal').value = diasServicio;
-                        document.getElementById('diasServMae').value = diasServicio;
-                        document.getElementById('aniosServMae').value = aniosServicio;
-                        document.getElementById("ModoRetiro").disabled =  false;
-                    }   
-                    var aniosserv = Math.floor(document.getElementById('aniosServMae').value);
-                    $.post("../../controller/tramites.php?op=obtenRetiro",{aniosserv:aniosserv},function(data){       
-                        data = JSON.parse(data);
-                        $('#montRet').val(data.montret.toFixed(2));
-                        montoRetiro = parseFloat(document.getElementById('montRet').value); //- adeudosMae).toFixed(2);
-                        if ($("#ModoRetiro").val() == "C") {
-                            document.getElementById("monRetEntr").value = montoRetiro;
-                        }else if ($("#ModoRetiro").val() == "D") {
-                            document.getElementById("DivTpoDiferido").style.display = "block";
-                            document.getElementById("montRetFondFall").style.display = "block";
-                            document.getElementById("montSalMin").disabled =  false;
-                            if (document.getElementById('ModRetDiferid50').checked){
-                                document.getElementById('monRetEntr').value = (montoRetiro / 2).toFixed(2);
-                                document.getElementById('montRetFF').value = (montoRetiro / 2).toFixed(2);
-                            }else if(document.getElementById('ModRetDiferid100').checked){
-                                document.getElementById('monRetEntr').value = "0";
-                                document.getElementById('montRetFF').value = montoRetiro;
-                            }
-                        }
-                    });             
-                    break;
-                
-                case 'vigenciaCad':
-                    diasServicio = data.diasServ
-                    aniosServicio = Math.trunc(diasServicio/365);
-                    
-                    swal.fire({
-                        title:'TRAMITE NO PROCEDENTE',
-                        text:"La fecha del tramite excede la vigencia del retiro. Tiene oficio o tarjeta de soporte de autorizacion",
-                        showCancelButton: true,
-                        confirmButtonText:'Si',
-                        cancelButtonText:'No',
-                        timer:15000
-                    }).then((result) => {
-                        if (result.isConfirmed){
-                            var divOfTr = document.getElementById("DivExcepciones");
-                            divOfTr.style.display = "block";
-                            document.getElementById("ModoRetiro").disabled =  false;
-                            document.getElementById("calcDiasAnios").disabled = true;
-
-                            document.getElementById('DiasServOriginal').value = diasServicio;
-                            document.getElementById('diasServMae').value = diasServicio;
-                            document.getElementById('aniosServMae').value = aniosServicio;
-
-                            var aniosserv = Math.floor(document.getElementById('aniosServMae').value);
-                            $.post("../../controller/tramites.php?op=obtenRetiro",{aniosserv:aniosserv},function(data){       
-                                data = JSON.parse(data);
-                                $('#montRet').val(data.montret.toFixed(2));
-                                montoRetiro = parseFloat(document.getElementById('montRet').value); //- adeudosMae).toFixed(2);
-                            });  
-                        }else{
-                            let pagAnterior = document.referrer;
-                            if (pagAnterior.indexOf(window.location.host) !== -1) {
-                                window.history.back();
-                            }
-                        }
-                    });
-                    break;
-                
-                case 'vigenciaCadD':
-                    diasServicio = data.diasServ
-                    aniosServicio = Math.trunc(diasServicio/365);
-                    if (data.prorroga == "SI") {
-                        swal.fire({
-                            title:'TRAMITE NO PROCEDENTE',
-                            text:"La fecha del tramite excede la vigencia del retiro. Tiene oficio o tarjeta de soporte de autorizacion",
-                            showCancelButton: true,
-                            confirmButtonText:'Si',
-                            cancelButtonText:'No',
-                            timer:15000
-                        }).then((result) => {
-                            if (result.isConfirmed){
-                                var divOfTr = document.getElementById("DivExcepciones");
-                                divOfTr.style.display = "block";
-                                document.getElementById("calcDiasAnios").disabled = true;
-                                
-                                document.getElementById('DiasServOriginal').value = diasServicio;
-                                document.getElementById('diasServMae').value = diasServicio;
-                                document.getElementById('aniosServMae').value = aniosServicio;
-                                
-                                var aniosserv = Math.floor(document.getElementById('aniosServMae').value);
-                                $.post("../../controller/tramites.php?op=obtenRetiro",{aniosserv:aniosserv},function(data){       
-                                    data = JSON.parse(data);
-                                    $('#montRet').val(data.montret.toFixed(2));
-                                    montoRetiro = parseFloat(document.getElementById('montRet').value); //- adeudosMae).toFixed(2);
-                                }); 
-                            }else{
-                                let pagAnterior = document.referrer;
-                                if (pagAnterior.indexOf(window.location.host) !== -1) {
-                                    window.history.back();
-                                }
-                            }
-                        });
-                    } else {
-                        swal.fire({
-                            title:'TRAMITE NO PROCEDENTE',
-                            text:"La fecha del tramite excede la vigencia del retiro y NO solicito prorroga",
-                            showCancelButton: true,
-                            confirmButtonText:'OK',
-                            timer:15000
-                        }).then((result) => {
-                            if (result.isConfirmed){
-                                let pagAnterior = document.referrer;
-                                if (pagAnterior.indexOf(window.location.host) !== -1) {
-                                    window.history.back();
-                                }
-                            }
-                        });
-                    }    
-                    break;    
-                
-                case 'errorFecha':
-                    notifError = data.diasServ;    
-                    Swal.fire(
-                        notifError,
-                        'por favor verifique las fechas'
-                    );
-                    break;
-                    
-                case 'noProcede':
-                    Swal.fire(
-                        'TRAMITE NO PROCEDENTE',
-                        'Tramite no procede, excede el limite de apoyo por oficio'
-                    );
-                    let pagAnterior = document.referrer;
-                            if (pagAnterior.indexOf(window.location.host) !== -1) {
-                                window.history.back();
-                            }
-                    break;
-                default:
-                    break;
-            }
-        });
-    } else if (valorValid == 3) {
-        motret = $("#OpcCauRetiro").val();
-        NumPersgs = $("#numPsgs").val();
-        diasInacPsgs = $("#diasPsgs").val();
-        
-        var fechIniJuic = 0;
-        
-        if ($("#fechIniJuicio").is(':visible')) {
-            fechIniJuic = 1;
-        } 
-
-        if (motret == "FA") {
-            $.post("../../controller/tramites.php?op=validaFechsFA",{clavemae:clavemae,motret:motret,diasInacPsgs:diasInacPsgs,NumPersgs:NumPersgs,fechRecibido:a_fechs[0]["valorF"],fechBaseMae:a_fechs[1]["valorF"],fechBajaMae:a_fechs[2]["valorF"],fecInicioJuic:fechIniJuic,fechaIniJuic:document.getElementById('fechIniJuicio').value,tiptest:document.getElementById('OpcTestamento').value,fechJuiCTL:document.getElementById('fechCTJuicio').value},function(data){
-                data = JSON.parse(data);
-                resultValid = data.descResult;
-                switch (resultValid) {
-                    case 'vigenciaVal':
-                        diasServicio = data.diasServ;
-                        aniosServicio = Math.trunc(diasServicio/365);
-                        if (document.getElementById('numPsgs').value > 0 && document.getElementById('diasPsgs').value !== 0){
-                            document.getElementById('DiasServOriginal').value = diasServicio;
-                            document.getElementById('diasServMae').value = diasServicio;
-                            document.getElementById('aniosServMae').value = aniosServicio;
-                            //document.getElementById("ModoRetiro").disabled =  true;
-                        }else{
-                            document.getElementById('numPsgs').value = 0;
-                            document.getElementById('diasPsgs').value = 0;
-                            document.getElementById('DiasServOriginal').value = diasServicio;
-                            document.getElementById('diasServMae').value = diasServicio;
-                            document.getElementById('aniosServMae').value = aniosServicio;
-                            //document.getElementById("ModoRetiro").disabled =  false;
-                        }   
-                        var aniosserv = Math.floor(document.getElementById('aniosServMae').value);
-                        $.post("../../controller/tramites.php?op=obtenRetiro",{aniosserv:aniosserv},function(data){       
-                            data = JSON.parse(data);
-                            $('#montRet').val(data.montret.toFixed(2));
-                            if (motret == "FA" || motret == "FJ") {
-                                document.getElementById("ModoRetiro").disabled =  true;
-                                document.getElementById("ModoRetiro").value = "C";
-                                montoRetiro = parseFloat(document.getElementById('montRet').value); //- adeudosMae).toFixed(2);
-                                document.getElementById('monRetEntr').value = montoRetiro;
-                            }
-                        });       
-                        break;
-                    
-                    case 'vigenciaCad':
-                        diasServicio = data.diasServ
-                        aniosServicio = Math.trunc(diasServicio/365);
-                        
-                        swal.fire({
-                            title:'TRAMITE NO PROCEDENTE',
-                            text:"La fecha del tramite excede la vigencia del retiro. Tiene oficio o tarjeta de soporte de autorizacion",
-                            showCancelButton: true,
-                            confirmButtonText:'Si',
-                            cancelButtonText:'No',
-                            timer:15000
-                        }).then((result) => {
-                            if (result.isConfirmed){
-                                var divOfTr = document.getElementById("DivExcepciones");
-                                divOfTr.style.display = "block";
-                                document.getElementById("ModoRetiro").disabled =  false;
-                                document.getElementById("calcDiasAnios").disabled = true;
-    
-                                document.getElementById('DiasServOriginal').value = diasServicio;
-                                document.getElementById('diasServMae').value = diasServicio;
-                                document.getElementById('aniosServMae').value = aniosServicio;
-    
-                                var aniosserv = Math.floor(document.getElementById('aniosServMae').value);
-                                $.post("../../controller/tramites.php?op=obtenRetiro",{aniosserv:aniosserv},function(data){       
-                                    data = JSON.parse(data);
-                                    $('#montRet').val(data.montret.toFixed(2));
-                                    if (motret == "FA" || motret == "FJ") {
-                                        document.getElementById("ModoRetiro").disabled =  true;
-                                        document.getElementById("ModoRetiro").value = "C";
-                                        montoRetiro = parseFloat(document.getElementById('montRet').value); //- adeudosMae).toFixed(2);
-                                        document.getElementById('monRetEntr').value = montoRetiro;
-                                    }
-                                });  
-                            }else{
-                                let pagAnterior = document.referrer;
-                                if (pagAnterior.indexOf(window.location.host) !== -1) {
-                                    window.history.back();
-                                }
-                            }
-                        });
-                        break;
-    
-                    case 'errorFecha':
-                        notifError = data.diasServ;    
-                        Swal.fire(
-                            notifError,
-                            'por favor verifique las fechas'
-                        );
-                        break;
-    
-                    default:
-                        break;
-                }
-            });
-        }else if (motret == "FJ") {
-            $.post("../../controller/tramites.php?op=validaFechsFJ",{clavemae:clavemae,motret:motret,fechRecibido:a_fechs[0]["valorF"],fechBaseMae:a_fechs[1]["valorF"],fechBajaMae:a_fechs[2]["valorF"],opTest:$("#OpcTestamento").val(),fechCTJuic:$("#fechCTJuicio").val(),fechIniJuic:document.getElementById("fechIniJuicio").value},function(data){
-                data = JSON.parse(data);
-                resultValid = data.descResult;
-                switch (resultValid) {
-                    case 'vigenciaVal':
-                        diasServicio = data.diasJub;
-                        aniosServicio = Math.trunc(diasServicio/365);
-                        document.getElementById('DiasServOriginal').value = diasServicio;
-                        document.getElementById('diasServMae').value = diasServicio;
-                        document.getElementById('aniosServMae').value = aniosServicio;
-                            //document.getElementById("ModoRetiro").disabled =  true;
-                        
-                        var aniosserv = Math.floor(document.getElementById('aniosServMae').value);
-                        
-                        $.post("../../controller/maestro.php?op=buscarJub",{claveisemym:claveisemym},function(dataJ){ 
-                            dataJ = Object.values(JSON.parse(dataJ));
-                            $("#programfallec").val(dataJ[10]);
-                            
-                        });
-                        
-                        
-                        if ($("#programfallec").val() == "M") {
-                            $.post("../../controller/tramites.php?op=obtenRetiroJub",{aniosserv:aniosserv,programac:"M"},function(data){       
-                                data = JSON.parse(data);
-                                
-                                $('#montRet').val(data.montret.toFixed(2));
-                                if (motret == "FA" || motret == "FJ") {
-                                    document.getElementById("ModoRetiro").disabled =  true;
-                                    document.getElementById("ModoRetiro").value = "C";
-                                    montoRetiro = parseFloat(document.getElementById('montRet').value); //- adeudosMae).toFixed(2);
-                                    document.getElementById('monRetEntr').value = montoRetiro;
-                                }
-                            });
-                        }else if ($("#programfallec").val() == "FF") {
-                            
-                        }
-                               
-                        break;
-                    
-                    case 'vigenciaCad':
-                        diasServicio = data.diasServ
-                        aniosServicio = Math.trunc(diasServicio/365);
-                        
-                        swal.fire({
-                            title:'TRAMITE NO PROCEDENTE',
-                            text:"La fecha del tramite excede la vigencia del retiro. Tiene oficio o tarjeta de soporte de autorizacion",
-                            showCancelButton: true,
-                            confirmButtonText:'Si',
-                            cancelButtonText:'No',
-                            timer:15000
-                        }).then((result) => {
-                            if (result.isConfirmed){
-                                var divOfTr = document.getElementById("DivExcepciones");
-                                divOfTr.style.display = "block";
-                                document.getElementById("ModoRetiro").disabled =  false;
-                                document.getElementById("calcDiasAnios").disabled = true;
-    
-                                document.getElementById('DiasServOriginal').value = diasServicio;
-                                document.getElementById('diasServMae').value = diasServicio;
-                                document.getElementById('aniosServMae').value = aniosServicio;
-    
-                                var aniosserv = Math.floor(document.getElementById('aniosServMae').value);
-                                $.post("../../controller/tramites.php?op=obtenRetiro",{aniosserv:aniosserv},function(data){       
-                                    data = JSON.parse(data);
-                                    $('#montRet').val(data.montret.toFixed(2));
-                                    if (motret == "FA" || motret == "FJ") {
-                                        document.getElementById("ModoRetiro").disabled =  true;
-                                        document.getElementById("ModoRetiro").value = "C";
-                                        montoRetiro = parseFloat(document.getElementById('montRet').value); //- adeudosMae).toFixed(2);
-                                        document.getElementById('monRetEntr').value = montoRetiro;
-                                    }
-                                });  
-                            }else{
-                                let pagAnterior = document.referrer;
-                                if (pagAnterior.indexOf(window.location.host) !== -1) {
-                                    window.history.back();
-                                }
-                            }
-                        });
-                        break;
-    
-                    case 'errorFecha':
-                        notifError = data.diasServ;    
-                        Swal.fire(
-                            notifError,
-                            'por favor verifique las fechas'
-                        );
-                        break;
-    
-                    default:
-                        break;
-                }
-            });
-        }
-        
-    } else {
-        Swal.fire(
-            "Las Fechas ingresadas no son correctas",
-            'No puede haber fechas mayores a el año en curso o menores a 1900, verifique las que estan marcadas en color rojo'
-        );
-    }
-}
-/*--------------------*/
-
 const accionOpcTestamento = document.querySelector('#OpcTestamento');
 accionOpcTestamento.addEventListener("click", function (evento) {
     evento.preventDefault();
     var tipoTestamnt = document.getElementById("OpcTestamento").value;
-
-    if (tipoTestamnt == "SL") {
-        document.getElementById("fechCTJuicio").disabled = true;
-        document.getElementById("fechCTJuicio").value = fechaActual();
-        document.getElementById("DivFechInicioJuicio").style.display = "none";
-        document.getElementById('editaBefens').disabled = false;
-    } else {
-        document.getElementById("fechCTJuicio").value = "";
-        document.getElementById("fechCTJuicio").disabled = false;
-        document.getElementById("DivFechInicioJuicio").style.display = "none";
-        document.getElementById('editaBefens').disabled = true;
-    }
+ 
+    document.getElementById("fechCTJuicio").value = "";
+    document.getElementById("fechCTJuicio").disabled = false;
+    document.getElementById("DivFechInicioJuicio").style.display = "none";
+    document.getElementById('editaBefens').disabled = true;
 });
 
 const accioFechTEstmnt = document.querySelector("#fechCTJuicio");
@@ -1644,63 +934,6 @@ accioFechTEstmnt.addEventListener("blur", function (evento) {
     }
 });
 
-
-const accioFechIniJuic = document.querySelector("#fechIniJuicio");
-accioFechIniJuic.addEventListener("blur", function (evento) {
-    evento.preventDefault();
-
-    if (parseInt(document.getElementById('fechIniJuicio').value.slice(0,4)) > 2020 && parseInt(document.getElementById('fechIniJuicio').value.slice(0,4)) < 2024) {
-        document.getElementById("fechCTJuicio").style.border =  ".1em black solid";
-        $.post("../../controller/tramites.php?op=validaVigFechas",{fechRecibido:document.getElementById('fechRecibido').value,fechBaja:document.getElementById('fechBajaMae').value,fechIniJuic:document.getElementById('fechIniJuicio').value,fechCTJuic:document.getElementById('fechCTJuicio').value},function(data){
-            data = JSON.parse(data);
-            resultValidFI = data.descResult;
-            
-            switch (resultValidFI) {
-                case 'validVal':
-                    document.getElementById("calcDiasAnios").disabled = false;
-                    document.getElementById("editaBefens").disabled = false;
-                    break;
-            
-                case 'errorFecha':
-                    notifError = data.descValid;    
-                    Swal.fire(
-                        notifError,
-                        'por favor verifique la fecha'
-                    );
-                    document.getElementById("calcDiasAnios").disabled = true;
-                    document.getElementById("editaBefens").disabled = true;
-                    break;
-                
-                case 'noProcede':
-                    document.getElementById("calcDiasAnios").disabled = true;
-                    document.getElementById("editaBefens").disabled = true;
-                    Swal.fire(
-                        "TRAMITE NO PROCEDENTE",
-                        'Tramite fuera del limite de vigencia para su validez'
-                    );
-                    
-                    let pagAnterior = document.referrer;
-                        if (pagAnterior.indexOf(window.location.host) !== -1) {
-                            window.history.back();
-                        }
-                    break;
-                
-                default:
-                    break;
-            }
-        });
-    }else{
-        document.getElementById("fechCTJuicio").style.border =  ".1em red solid";
-        Swal.fire(
-            "El año de la fecha de inicio del Juicio no es valido",
-            'por favor corrija la fecha'
-        );
-        document.getElementById("calcDiasAnios").disabled = true;
-        document.getElementById("editaBefens").disabled = true;
-    }
-    
-});
-
 var numBenefs=0;
 const benefs_max = 20;
 var contBenefs=1;
@@ -1888,242 +1121,6 @@ $("#editarBenefs").on("submit",function(evento){
 });
 
 
-
-
-
-var checkboxAdeudo = document.getElementById('CheckAdeudos');
-checkboxAdeudo.addEventListener("change", validaCheckAdeudos, false);
-function validaCheckAdeudos(){
-    var checked =checkboxAdeudo.checked;
-    var modalidad = document.getElementById('ModoRetiro').value;
-    if(checked){
-        document.getElementById("DivDatsAdeudos").style.display = "block";
-    }else{
-        document.getElementById("DivDatsAdeudos").style.display = "none";
-        document.getElementById('montAdeudos').value = 0;
-        if (document.getElementById('montRet').value !== 0 && document.getElementById('montRet').value !== "") {
-            montoRetiro = document.getElementById('montRet').value;
-            if (modalidad == "C") {
-                document.getElementById('monRetEntr').value = montoRetiro;
-                document.getElementById("montRetFondFall").style.display = "none";
-                document.getElementById("DivTpoDiferido").style.display = "none";
-                document.getElementById("montRetFF").value = 0;
-                document.getElementById("montSalMin").value = 0;
-            } else if (modalidad == "D") {
-                document.getElementById("DivTpoDiferido").style.display = "block";
-                document.getElementById("montRetFondFall").style.display = "block";
-                document.getElementById("montSalMin").disabled =  false;
-                if (document.getElementById('ModRetDiferid50').checked){
-                    document.getElementById('monRetEntr').value = (montoRetiro / 2).toFixed(2);
-                    document.getElementById('montRetFF').value = (montoRetiro / 2).toFixed(2);
-                }else if(document.getElementById('ModRetDiferid100').checked){
-                    document.getElementById('monRetEntr').value = "0";
-                    document.getElementById('montRetFF').value = montoRetiro;
-                }
-            }
-        }
-    }
-}
-
-var adeudosMae = 0;
-$("#AdedFajam").change(function () {
-    if (montoRetiro > 0) {
-        AdeudoFAJAM = document.getElementById('AdedFajam').value.replace(",","");
-        document.getElementById('AdedFajam').value = (new Intl.NumberFormat('es-MX').format(AdeudoFAJAM));
-    } else {
-        AdeudoFAJAM = document.getElementById('AdedFajam').value.replace(",","");
-        document.getElementById('AdedFajam').value = (new Intl.NumberFormat('es-MX').format(AdeudoFAJAM));
-    }
-});
-
-$("#AdedTS").change(function () {
-    if (montoRetiro > 0) {
-        AdeudoTS = document.getElementById('AdedTS').value.replace(",","");
-        document.getElementById('AdedTS').value = (new Intl.NumberFormat('es-MX').format(AdeudoTS));
-    } else {
-        AdeudoTS = document.getElementById('AdedTS').value.replace(",","");
-        document.getElementById('AdedTS').value = (new Intl.NumberFormat('es-MX').format(AdeudoTS));
-    }
-});
-
-$("#AdedFondPension").change(function () {
-    if (montoRetiro > 0) {
-        AdeudoFondPension = document.getElementById('AdedFondPension').value.replace(",","");
-        document.getElementById('AdedFondPension').value = (new Intl.NumberFormat('es-MX').format(AdeudoFondPension));
-    } else {
-        AdeudoFondPension = document.getElementById('AdedFondPension').value.replace(",","");
-        document.getElementById('AdedFondPension').value = (new Intl.NumberFormat('es-MX').format(AdeudoFondPension));
-    }
-});
-
-$("#AdedTurismo").change(function () {
-    if (montoRetiro > 0) {
-        AdeudoTurismo = document.getElementById('AdedTurismo').value.replace(",","");
-        document.getElementById('AdedTurismo').value = (new Intl.NumberFormat('es-MX').format(AdeudoTurismo));
-    } else {
-        AdeudoTurismo = document.getElementById('AdedTurismo').value.replace(",","");
-        document.getElementById('AdedTurismo').value = (new Intl.NumberFormat('es-MX').format(AdeudoTurismo)); 
-    }
-});
-
-var numadeds = 0;
-var accionActRetiro = document.querySelector("#ActRetAdeds");
-accionActRetiro.addEventListener("click", function (event) {
-    event.preventDefault();
-    
-    numadeds = 0
-    adeudosMae = 0;
-    adeudosMae = parseFloat(document.getElementById('AdedFajam').value.replace(",","")) + parseFloat(document.getElementById('AdedTS').value.replace(",","")) + parseFloat(document.getElementById('AdedFondPension').value.replace(",","")) + parseFloat(document.getElementById('AdedTurismo').value.replace(",",""));
-
-    if (parseFloat(document.getElementById('AdedFajam').value.replace(",","")) > 0) {
-        numadeds++;
-    }
-    if (parseFloat(document.getElementById('AdedTS').value.replace(",","")) > 0) {
-        numadeds++;
-    }
-    if (parseFloat(document.getElementById('AdedFondPension').value.replace(",","")) > 0) {
-        numadeds++;
-    }
-    if (parseFloat(document.getElementById('AdedTurismo').value.replace(",","")) > 0) {
-        numadeds++;
-    }
-
-    var montTotRet = document.getElementById('montRet').value.replace(",","");
-    document.getElementById('montRetSinAded').value = montTotRet - adeudosMae;
-    document.getElementById('montAdeudos').value = adeudosMae;
-    if (adeudosMae > 0) {
-        var modalidadAct = document.getElementById('ModoRetiro').value;
-        var montRetSinAded =  document.getElementById('montRetSinAded').value;
-        if (modalidadAct == "C") {
-            document.getElementById('monRetEntr').value = montRetSinAded;
-            document.getElementById("montRetFondFall").style.display = "none";
-            document.getElementById("DivTpoDiferido").style.display = "none";
-        } else if (modalidadAct == "D") {
-            document.getElementById("DivTpoDiferido").style.display = "block";
-            document.getElementById("montRetFondFall").style.display = "block";
-            document.getElementById("montSalMin").disabled =  false;
-            if (document.getElementById('ModRetDiferid50').checked){
-                document.getElementById('monRetEntr').value = (montRetSinAded / 2).toFixed(2);
-                document.getElementById('montRetFF').value = (montRetSinAded / 2).toFixed(2);
-            }else if(document.getElementById('ModRetDiferid100').checked){
-                document.getElementById('monRetEntr').value = "0";
-                document.getElementById('montRetFF').value = montRetSinAded;
-            }
-        }    
-    }else{
-        document.getElementById("DivDatsAdeudos").style.display = "none";
-        document.getElementById("CheckAdeudos").checked = false;
-        var modalidadAct = document.getElementById('ModoRetiro').value;
-        var montRetSinAded =  document.getElementById('montRet').value;
-        if (modalidadAct == "C") {
-            document.getElementById('monRetEntr').value = montRetSinAded;
-            document.getElementById("montRetFondFall").style.display = "none";
-            document.getElementById("DivTpoDiferido").style.display = "none";
-        } else if (modalidadAct == "D") {
-            document.getElementById("DivTpoDiferido").style.display = "block";
-            document.getElementById("montRetFondFall").style.display = "block";
-            document.getElementById("montSalMin").disabled =  false;
-            if (document.getElementById('ModRetDiferid50').checked){
-                document.getElementById('monRetEntr').value = (montRetSinAded / 2).toFixed(2);
-                document.getElementById('montRetFF').value = (montRetSinAded / 2).toFixed(2);
-            }else if(document.getElementById('ModRetDiferid100').checked){
-                document.getElementById('monRetEntr').value = "0";
-                document.getElementById('montRetFF').value = montRetSinAded;
-            }
-        }    
-    }
-});
-
-var montoRetiro = 0;
-var accionOpciModRet = document.getElementById('ModoRetiro');
-accionOpciModRet.addEventListener("change", calculaRetiro, false);
-function calculaRetiro() {
-    var modalidad = document.getElementById('ModoRetiro').value;
-    if (document.getElementById('CheckAdeudos').checked && document.getElementById('montRetSinAded').value!=="") {
-        montoRetiro = document.getElementById('montRetSinAded').value.replace(',','');
-        if (modalidad == "C") {
-            document.getElementById('monRetEntr').value = montoRetiro;
-            document.getElementById("montRetFondFall").style.display = "none";
-            document.getElementById("DivTpoDiferido").style.display = "none";
-            document.getElementById('ModalRetiro').value = "C";
-            document.getElementById("montRetFF").value = 0;
-            document.getElementById("montSalMin").value = 0;
-        } else if (modalidad == "D") {
-            document.getElementById("DivTpoDiferido").style.display = "block";
-            document.getElementById("montRetFondFall").style.display = "block";
-            document.getElementById("montSalMin").disabled =  false;
-            if (document.getElementById('ModRetDiferid50').checked){
-                document.getElementById('monRetEntr').value = (montoRetiro / 2).toFixed(2);
-                document.getElementById('montRetFF').value = (montoRetiro / 2).toFixed(2);
-                document.getElementById('ModalRetiro').value = "D50";
-            }else if(document.getElementById('ModRetDiferid100').checked){
-                document.getElementById('monRetEntr').value = "0";
-                document.getElementById('montRetFF').value = montoRetiro;
-                document.getElementById('ModalRetiro').value = "D100";
-            }
-        }
-    } else {
-        montoRetiro = document.getElementById('montRet').value.replace(',','');
-        if (modalidad == "C") {
-            document.getElementById('monRetEntr').value = montoRetiro;
-            document.getElementById("montRetFondFall").style.display = "none";
-            document.getElementById("DivTpoDiferido").style.display = "none";
-            document.getElementById('ModalRetiro').value = "C";
-            document.getElementById("montRetFF").value = 0;
-            document.getElementById("montSalMin").value = 0;
-        } else if (modalidad == "D") {
-            document.getElementById("DivTpoDiferido").style.display = "block";
-            document.getElementById("montRetFondFall").style.display = "block";
-            document.getElementById("montSalMin").disabled =  false;
-            if (document.getElementById('ModRetDiferid50').checked){
-                document.getElementById('monRetEntr').value = (montoRetiro / 2).toFixed(2);
-                document.getElementById('montRetFF').value = (montoRetiro / 2).toFixed(2);
-                document.getElementById('ModalRetiro').value = "D50";
-            }else if(document.getElementById('ModRetDiferid100').checked){
-                document.getElementById('monRetEntr').value = "0";
-                document.getElementById('montRetFF').value = montoRetiro;
-                document.getElementById('ModalRetiro').value = "D100";
-            }
-        }
-    }
-}
-
-var radModDife100 = document.getElementById('ModRetDiferid100');
-radModDife100.addEventListener("change", calcMretDif100porc, false);
-function calcMretDif100porc() {
-    if(document.getElementById('CheckAdeudos').checked && document.getElementById('montRetSinAded').value !== "0") {
-        montoRetiro = document.getElementById('montRetSinAded').value.replace(',','');
-    }else if (document.getElementById('CheckAdeudos').checked && document.getElementById('montRetSinAded').value == 0){
-        montoRetiro = document.getElementById('montRet').value.replace(',','');
-    }else {
-        montoRetiro = document.getElementById('montRet').value.replace(',','');
-    }
-    var opcDife = radModDife100.checked;
-    if(opcDife){
-        document.getElementById('monRetEntr').value = "0";
-        document.getElementById('montRetFF').value = montoRetiro;
-        document.getElementById('ModalRetiro').value = "D100";  
-    }
-}
-
-var radModDife50 = document.getElementById('ModRetDiferid50');
-radModDife50.addEventListener("change", calcMretDif50porc, false);
-function calcMretDif50porc() {
-    var opcDife = radModDife50.checked;
-    if(document.getElementById('CheckAdeudos').checked && document.getElementById('montRetSinAded').value !== "0") {
-        montoRetiro = document.getElementById('montRetSinAded').value.replace(',','');
-    }else if (document.getElementById('CheckAdeudos').checked && document.getElementById('montRetSinAded').value == 0){
-        montoRetiro = document.getElementById('montRet').value.replace(',','');
-    }else {
-        montoRetiro = document.getElementById('montRet').value.replace(',','');
-    }
-    if(opcDife){
-        document.getElementById('monRetEntr').value = (montoRetiro / 2).toFixed(2);
-        document.getElementById('montRetFF').value = (montoRetiro / 2).toFixed(2);
-        document.getElementById('ModalRetiro').value = "D50";
-    }
-}
-
 var accionRegresa = document.querySelector('.Btnregresar');
 accionRegresa.addEventListener("click", function (e) {
     e.preventDefault();
@@ -2140,19 +1137,19 @@ var accionGuardar = document.getElementById('updateTramite');
 accionGuardar.addEventListener("click", function (event) {
     event.preventDefault();
     switch (motivo) {
-        case 'I':
+        case 'FRI':
             actualizaJubInha();
             break;
 
-        case 'J':
+        case 'FRJ':
             actualizaJubInha();
             break;
 
-        case 'FA':
+        case 'FRF':
             actualizaFallAct();
             break;
 
-        case 'FJ':
+        case 'FMJ':
             actualizaFallJub();
             break;
 
@@ -2180,35 +1177,13 @@ function actualizaJubInha() {
                                                         UnumDictam:$("#folioDictamen").val(),
                                                         Ufechbaj:$("#fechBajaMae").val(),
                                                         UnomSolic:$("#nomSolic").val(),
-                                                        UNumCel:$("#TelCelMae").val(),
-                                                        UnumPart:$("#TelPartiMae").val(),
                                                         Ufechbase:$("#fechBaseMae").val(),
-                                                        UfechInipsgs:document.getElementById('fechsIniPSGS').value,
-                                                        UfechFinpsgs:document.getElementById('fechsFinPSGS').value,
-                                                        Unumpsgs:$("#numPsgs").val(),
-                                                        Udiaspsgs:$("#diasPsgs").val(),
-                                                        UdiasServ:$("#diasServMae").val(),
                                                         UaniosServ:$('#aniosServMae').val(),
-                                                        UmodRet:$("#ModoRetiro").val(),
                                                         Umonttotret:document.getElementById('montRet').value.replace(',',''),
-                                                        UmontretEntr:$("#monRetEntr").val().replace(',',''),
-                                                        UmontRetFF:document.getElementById('montRetFF').value.replace(',',''),
                                                         UfechRecibido:$("#fechRecibido").val(),
-                                                        UnumOficTarj:$("#numOficTarj").val(),
-                                                        UfechOficAut:$("#fechOficAut").val(),
-                                                        UimageOficTarj:$("#imageOficTarj").val(),
                                                         Unumbenefs:$("#numbenef").val(),
-                                                        UdiaHaber: $("#montSalMin").val().replace(",",""),
-                                                        UadedFajam: $("#AdedFajam").val().replace(",",""),
-                                                        UadedTS: $("#AdedTS").val().replace(",",""),
-                                                        UadedFondPens: $("#AdedFondPension").val().replace(",",""),
-                                                        UadedTurismo: $("#AdedTurismo").val().replace(",",""),
-                                                        UmontAdeds: $("#montAdeudos").val().replace(",",""),
-                                                        UmontretSnAdeds:$("#montRetSinAded").val().replace(",",""),
-                                                        Unumadeds: numadeds,
                                                         Ucurpmae:document.getElementById('CURPMae').value,
                                                         Urfcmae:document.getElementById('RFCMae').value,
-														UtipTram:tipTramit,
 														UfolCheqBenef:document.getElementById('numfolcheqTEJI').value
                                                         },function (data) {
                                                             resultadoAdd = Object.values( JSON.parse(data));
@@ -2284,30 +1259,10 @@ function actualizaFallAct() {
                                                         URegMae:$("#regsindmae").val(),
                                                         Ufechbaj:$("#fechBajaMae").val(),
                                                         UnomSolic:$("#nomSolic").val(),
-                                                        UNumCel:$("#TelCelMae").val(),
-                                                        UnumPart:$("#TelPartiMae").val(),
                                                         Ufechbase:$("#fechBaseMae").val(),
-                                                        UfechInipsgs:document.getElementById('fechsIniPSGS').value,
-                                                        UfechFinpsgs:document.getElementById('fechsFinPSGS').value,
-                                                        Unumpsgs:$("#numPsgs").val(),
-                                                        Udiaspsgs:$("#diasPsgs").val(),
-                                                        UdiasServ:$("#diasServMae").val(),
                                                         UaniosServ:$('#aniosServMae').val(),
-                                                        UmodRet:document.getElementById("ModoRetiro").value,
                                                         Umonttotret:document.getElementById('montRet').value.replace(',',''),
-                                                        UmontretEntr:$("#monRetEntr").val().replace(',',''),
                                                         UfechRecibido:$("#fechRecibido").val(),
-                                                        UnumOficTarj:$("#numOficTarj").val(),
-                                                        UfechOficAut:$("#fechOficAut").val(),
-                                                        UimageOficTarj:$("#imageOficTarj").val(),
-                                                        Unumbenefs:$("#numBenefs").val(),
-                                                        UadedFajam: $("#AdedFajam").val().replace(",",""),
-                                                        UadedTS: $("#AdedTS").val().replace(",",""),
-                                                        UadedFondPens: $("#AdedFondPension").val().replace(",",""),
-                                                        UadedTurismo: $("#AdedTurismo").val().replace(",",""),
-                                                        UmontAdeds: $("#montAdeudos").val().replace(",",""),
-                                                        UmontretSnAdeds:$("#montRetSinAded").val().replace(",",""),
-                                                        Unumadeds: numadeds,
                                                         Unombenefs:$("#nomsbenefs").val(),
                                                         Ucurpbenefs:$("#curpsbenefs").val(),
                                                         Uparentbenefs:$("#parentsbenefs").val(),
@@ -2374,26 +1329,11 @@ function actualizaFallJub(){
                                                         URegMae:$("#regsindmae").val(),
                                                         Ufechbaj:$("#fechBajaMae").val(),
                                                         UnomSolic:$("#nomSolic").val(),
-                                                        UNumCel:$("#TelCelMae").val(),
-                                                        UnumPart:$("#TelPartiMae").val(),
                                                         Ufechbase:document.getElementById("fechBaseMae").value, //$("#fechBaseMae").val(),
-                                                        UdiasServ:$("#diasServMae").val(),
                                                         UaniosServ:$('#aniosServMae').val(),
                                                         UmodRet:document.getElementById("ModoRetiro").value,
                                                         Umonttotret:document.getElementById('montRet').value.replace(',',''),
-                                                        UmontretEntr:$("#monRetEntr").val().replace(',',''),
-                                                        UfechRecibido:$("#fechRecibido").val(),
-                                                        UnumOficTarj:$("#numOficTarj").val(),
-                                                        UfechOficAut:$("#fechOficAut").val(),
-                                                        UimageOficTarj:$("#imageOficTarj").val(),
                                                         Unumbenefs:$("#numBenefs").val(),
-                                                        UadedFajam: $("#AdedFajam").val().replace(",",""),
-                                                        UadedTS: $("#AdedTS").val().replace(",",""),
-                                                        UadedFondPens: $("#AdedFondPension").val().replace(",",""),
-                                                        UadedTurismo: $("#AdedTurismo").val().replace(",",""),
-                                                        UmontAdeds: $("#montAdeudos").val().replace(",",""),
-                                                        UmontretSnAdeds:$("#montRetSinAded").val().replace(",",""),
-                                                        Unumadeds: numadeds,
                                                         Unombenefs:$("#nomsbenefs").val(),
                                                         Ucurpbenefs:$("#curpsbenefs").val(),
                                                         Uparentbenefs:$("#parentsbenefs").val(),

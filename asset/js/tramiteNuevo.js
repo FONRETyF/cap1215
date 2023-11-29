@@ -6,8 +6,6 @@ function init() {
   
 }
 
-
-
 $(document).ready(function(){
     document.getElementById('numentr').value = document.getElementById('InputNumEntr').value;
     document.getElementById('AnioEntr').value = document.getElementById('InputAnioEntr').value;
@@ -23,12 +21,11 @@ $(document).ready(function(){
     });
 });
 
-
 $("#OpcCauRetiro").change(function () {
     motivo= $("#OpcCauRetiro").val();
 
     switch (motivo) {
-        case "I":
+        case "FRI":
             document.getElementById("DivDictamen").style.display = "block";
             document.getElementById("DivTestBenefsMae").style.display = "none";
             document.getElementById("numfolcheqTEJI").style.display = "block";
@@ -38,7 +35,7 @@ $("#OpcCauRetiro").change(function () {
             $('#tituto_InptBajFall').html('Baja: &nbsp');    
             break;
 
-        case "J":
+        case "FRJ":
             document.getElementById("DivDictamen").style.display = "block";
             document.getElementById("DivTestBenefsMae").style.display = "none";
             document.getElementById("numfolcheqTEJI").style.display = "block";
@@ -48,7 +45,7 @@ $("#OpcCauRetiro").change(function () {
             $('#tituto_InptBajFall').html('Baja: &nbsp');    
             break;
 
-        case "FA":
+        case "FRF":
             document.getElementById("DivDictamen").style.display = "none";
             document.getElementById("DivTestBenefsMae").style.display = "block";
             document.getElementById("numfolcheqTEJI").style.display = "none";
@@ -58,7 +55,7 @@ $("#OpcCauRetiro").change(function () {
             $('#tituto_InptBajFall').html('Fallecim.: &nbsp');
             break;
 
-        case "FJ":
+        case "FMJ":
             document.getElementById("cspMaeBusq").disabled =  true;
             document.getElementById("DivDictamen").style.display = "none";
             document.getElementById("DivTestBenefsMae").style.display = "block";
@@ -74,14 +71,12 @@ $("#OpcCauRetiro").change(function () {
     }
 });
 
-
 $(".CSPMae").keydown(function (event) {
     var key = window.event ? event.which : event.keyCode;
     if((key < 48 || key > 57) && (key < 96 || key > 105) && key !== 37 && key !==39 && key !==8 && key!==9 && key !==46){
         return false;
     }
 });
-
 
 $(".cveissemym").keydown(function (event) {
     var key = window.event ? event.which : event.keyCode;
@@ -90,14 +85,12 @@ $(".cveissemym").keydown(function (event) {
     }
 });
 
-
 $('#CURPMae').keydown(function (event) {
     var key = window.event ? event.which : event.keyCode;
     if((key < 65 || key > 90)  && (key < 97 || key > 122) && (key < 48 || key > 57) && (key < 96 || key > 105) && key !== 37 && key !==39 && key !==8 && key!==9 && key !==46){
         return false;
     }
 });
-
 
 $('#CURPMae').change(function () {
     document.getElementById('RFCMae').value = document.getElementById('CURPMae').value.substr(0,10).toUpperCase();
@@ -531,19 +524,19 @@ accionAgregar.addEventListener("click", function (event) {
     event.preventDefault();
 
     switch (motivo) {
-        case 'I':
+        case 'FRI':
             agregajubilado();
             break;
 
-        case 'J':
+        case 'FRJ':
             agregajubilado();
             break;
 
-        case 'FA':
+        case 'FRF':
             agregaRetFallecimiento();
             break;
 
-        case 'FJ':
+        case 'FMJ':
             agregaRetFallecimientoJ();
             break;
 

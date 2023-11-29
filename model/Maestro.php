@@ -37,16 +37,6 @@
             return $results;
         }
 
-        public function get_maestroFondoFallec($claveisemym){
-            $consultaMFF = "SELECT cveissemym,fechafifondfalle,estatfondfall, (SELECT apepatmae FROM public.maestros_smsem WHERE cveissemym = '".$claveisemym."') as apepatmae,(SELECT apematmae FROM public.maestros_smsem WHERE cveissemym = '".$claveisemym."') as apematmae,";
-            $consultaMFF = $consultaMFF . "(SELECT nommae FROM public.maestros_smsem WHERE cveissemym = '".$claveisemym."') as nommae,(SELECT nomcommae FROM public.maestros_smsem WHERE cveissemym = '".$claveisemym."') as nomcommae,(SELECT curpmae FROM public.maestros_smsem WHERE cveissemym = '".$claveisemym."') as curpmae,";
-            $consultaMFF = $consultaMFF . "(SELECT rfcmae FROM public.maestros_smsem WHERE cveissemym = '".$claveisemym."') as rfcmae FROM public.fondo_fallecimiento WHERE cveissemym = '".$claveisemym."';";
-            $statement = $this->db->prepare($consultaMFF);
-            $statement->execute();
-            $results = $statement->fetchAll(PDO::FETCH_ASSOC);
-            return $results;
-        }
-
         public function update_nomMae($apepatmae,$apematmae,$nommae,$nomcommae,$cvemae,$cveusu){
             $fecha = date("Y-m-d");
             $nomcommae = $apepatmae . " " . $apematmae . " " . $nommae;
@@ -104,52 +94,6 @@
 			}catch (\Throwable $th){
 				echo($th);
 			}
-        }
-
-        public function busca_EdoCta($criterioBusq,$valorCriterio){
-            $a_EdoCta = array();
-            $a_results_EdoCta = array();
-
-            if ($criterioBusq === "cveissemym") {
-                try {
-                    $statement = $this->db->prepare('SELECT cveissemym,programfallec FROM public.jubilados_smsem WHERE cveissemym=?');
-                    $statement->bindValue(1,$valorCriterio);
-                    $statement->execute();
-                    $results = $statement->fetchAll(PDO::FETCH_ASSOC);
-                } catch (\Throwable $th) {
-                    echo($th);
-                }
-               
-            } elseif ($criterioBusq === "nomcomjub") {
-                try {
-                    $consulta ="SELECT cveissemym,programfallec FROM public.jubilados_smsem WHERE nomcomjub LIKE '%".$valorCriterio."%';";
-                    $statement = $this->db->prepare($consulta);
-                    $statement->execute();
-                    $results = $statement->fetchAll(PDO::FETCH_ASSOC);
-                } catch (\Throwable $th) {
-                    echo($th);
-                }
-            }   
-          
-            foreach ($results as $row) {
-                if ($row["programfallec"] === "M") {
-                    try {
-                        $consulta ="SELECT tabMut.cveissemym,tabMut.nomcommae,tabMut.estatmutual,tabMut.fechbajamae,tabMut.fechafimutu,tabEdoCta.numaport,tabEdoCta.montaport,tabEdoCta.anioiniaport,tabEdoCta.anioultaport";
-                        $consulta = $consulta . " FROM public.mutualidad as tabMut LEFT JOIN public.edoscta_mut as tabEdoCta ON tabMut.cveissemym = tabEdoCta.cveissemym WHERE tabMut.cveissemym = '".$row["cveissemym"]."';";
-                        $statement = $this->db->prepare($consulta);
-                        $statement->execute();
-                        $resultsEdoCta = $statement->fetchAll(PDO::FETCH_ASSOC);
-                        $a_results_EdoCta["EdoCta"] = $resultsEdoCta;
-                        $a_results_EdoCta["programa"] = "M";
-                        array_push($a_EdoCta,$a_results_EdoCta);
-                    } catch (\Throwable $th) {
-                        echo($th);
-                    }
-                } elseif ($row["programfallec"] === "FF") {
-                    # code...
-                }               
-            }
-            return $a_EdoCta;
         }
 
         public function insertMae($csp,$cveissemym,$apepat,$apemat,$nombre,$nomcom,$curp,$rfc,$region,$cveusu){

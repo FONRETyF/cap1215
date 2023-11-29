@@ -1,9 +1,7 @@
 const identrega =  $("#InputIdentrega").val();
 
 function init() {
-
 }
-
 
 $(document).ready(function () {
     var varstat = obtenEstatEntr(identrega);
@@ -76,20 +74,6 @@ $(document).ready(function () {
     });
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function obtenEstatEntr(identrega) {
     $.post("../../controller/retiros.php?op=buscaEnt",{identrega:identrega},function(data){
         datEntr = JSON.parse(data);
@@ -122,14 +106,14 @@ function mostrar(identret,cvemae) {
         datTramite = JSON.parse(data);
         var motivoRet = datTramite.motvret;
         var modretiro = datTramite.modretiro;
-        if (motivoRet == "J" || motivoRet == "I" || motivoRet == "FA") {
+        if (motivoRet == "FRJ" || motivoRet == "FRI" || motivoRet == "FRF") {
             $.post("../../controller/retiros.php?op=mostrarJI",{identret:identret,modretiro:modretiro,cvemae:cvemae,motivoRet:motivoRet},function(datos){
                 datos = JSON.parse(datos);
-                if (datos.motvret == "J") {
+                if (datos.motvret == "FRJ") {
                     motivo="JUBILACION";
-                } else if (datos.motvret == "I") {
+                } else if (datos.motvret == "FRI") {
                     motivo="INHABILITACION";
-                }else if (datos.motvret == "FA"){
+                }else if (datos.motvret == "FRF"){
                     motivo="FALLECIMIENTO";
                 }
 
@@ -149,7 +133,7 @@ function mostrar(identret,cvemae) {
                     default:
                         break;
                 }
-                if (motivoRet == "J" || motivoRet == "I") {
+                if (motivoRet == "FRJ" || motivoRet == "FRI") {
                     document.getElementById("secBenefes").style.display="none";
                     document.getElementById("DivDTFolche").style.display="block";
                     document.getElementById("DivDTEstatche").style.display="block";
@@ -158,7 +142,7 @@ function mostrar(identret,cvemae) {
                     document.getElementById("DivDTAniosBase").style.display="block";
 
 
-                }else if( motivoRet == "FA"){
+                }else if( motivoRet == "FRF"){
                     document.getElementById("secBenefes").style.display="block";
                     document.getElementById("DivDTFolche").style.display="none";
                     document.getElementById("DivDTEstatche").style.display="none";
@@ -261,7 +245,6 @@ function mostrar(identret,cvemae) {
             });
         }
     });
-
     $('#detalleInfoRatiro').modal('show');
 }
 
@@ -269,7 +252,7 @@ function imprimir(identret,cvemae) {
     $.post("../../controller/retiros.php?op=getTram",{identret:identret},function(data){
         datTramite = JSON.parse(data);
         var motivoRet = datTramite.motvret;
-        if (motivoRet == "J" || motivoRet == "I") {
+        if (motivoRet == "FRJ" || motivoRet == "FRI") {
             location.href = "../../views/home/acuerdoRetiro.php" + "?identret=" + identret;
         } else {
             swal.fire(
@@ -280,12 +263,12 @@ function imprimir(identret,cvemae) {
     });
 }
 
-
-function editar(identret) {
+function editarH(identret) {
     location.href = "../../views/home/tramiteUpdate.php" + "?identret=" + identret;
 }
 
-function eliminarT(identret,cvemae) {
+function eliminarH(identret,cvemae) {
+    alert("dsjhshfihdifhidfhodsa");
     swal.fire({
         title:'ELIMINACIÓN DE TRAMITE',
         text:"Eliminara el tramite de la clave " + cvemae +"?",
@@ -359,9 +342,5 @@ function eliminarT(identret,cvemae) {
         }
     });
 }
-
-
-
-
 
 init();
