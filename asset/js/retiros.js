@@ -268,7 +268,7 @@ function editarH(identret) {
 }
 
 function eliminarH(identret,cvemae) {
-    alert("dsjhshfihdifhidfhodsa");
+    
     swal.fire({
         title:'ELIMINACIÓN DE TRAMITE',
         text:"Eliminara el tramite de la clave " + cvemae +"?",
